@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>Now Playing in Theatres</h1>
+
+<div class="filters">
+    <h3>What are you in the mood for?</h3>
+    <button class="filter-btn" data-filter="all">All Shows</button>
+    <button class="filter-btn" data-filter="Comedy">Comedy</button>
+    <button class="filter-btn" data-filter="Drama">Drama</button>
+    <button class="filter-btn" data-filter="Musical">Musical</button>
+    <button class="filter-btn" data-filter="Lighthearted">Lighthearted</button>
+    <button class="filter-btn" data-filter="Serious">Serious</button>
+</div>
+
+<div class="shows-grid">
+    {% for show in shows %}
+    <div class="show-card" data-genre="{{ show.genre }}" data-mood="{{ show.mood }}">
+        <h2>{{ show.title }}</h2>
+        <p class="theatre">{{ show.theatre }}</p>
+        <p class="dates">{{ show.dates }}</p>
+        
+        <div class="show-dna">
+            <span class="genre">🎭 {{ show.genre }}</span>
+            <span class="mood">😊 {{ show.mood }}</span>
+            <div class="keywords">
+                {% if show.keywords %}
+                    {% for keyword in show.keywords.split(',') %}
+                        <span class="keyword-tag">{{ keyword }}</span>
+                    {% endfor %}
+                {% endif %}
+            </div>
+        </div>
+        
+        <p class="description">{{ show.description[:200] }}...</p>
+        
+        {% if user %}
+        <div class="user-actions">
+            <button class="seen-btn" data-show-id="{{ show.id }}">✓ Seen It!</button>
+            
+            <div class="rating" data-show-id="{{ show.id }}">
+                <span class="star" data-rating="1">★</span>
+                <span class="star" data-rating="2">★</span>
+                <span class="star" data-rating="3">★</span>
+                <span class="star" data-rating="4">★</span>
+                <span class="star" data-rating="5">★</span>
+            </div>
+            
+            <div class="liked-toggle">
+                <label>
+                    <input type="checkbox" class="liked-checkbox" data-show-id="{{ show.id }}">
+                    I Liked This
+                </label>
+            </div>
+        </div>
+        {% else %}
+        <p><a href="/login">Login</a> to rate shows and get recommendations!</p>
+        {% endif %}
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

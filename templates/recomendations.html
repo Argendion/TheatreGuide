@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>Your Personalized Recommendations</h1>
+
+{% if recommendations %}
+    <h2>Based on your taste...</h2>
+    <div class="shows-grid">
+        {% for show in recommendations %}
+        <div class="show-card recommended">
+            <h2>{{ show.title }}</h2>
+            <p class="theatre">{{ show.theatre }}</p>
+            
+            <div class="show-dna">
+                <span class="genre">🎭 {{ show.genre }}</span>
+                <span class="mood">😊 {{ show.mood }}</span>
+                <div class="keywords">
+                    {% if show.keywords %}
+                        {% for keyword in show.keywords.split(',') %}
+                            <span class="keyword-tag">{{ keyword }}</span>
+                        {% endfor %}
+                    {% endif %}
+                </div>
+            </div>
+            
+            <div class="match-score">
+                <strong>Why we recommend this:</strong>
+                <p>Matches your interest in 
+                    {% if show.keywords %}
+                        {% set keywords = show.keywords.split(',') %}
+                        {% for keyword in keywords[:2] %}
+                            "{{ keyword }}"{% if not loop.last %}, {% endif %}
+                        {% endfor %}
+                    {% endif %}
+                </p>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+{% else %}
+    <p>Start rating shows to get personalized recommendations!</p>
+    <a href="/" class="button">Browse Shows</a>
+{% endif %}
+
+{% if collaborative_recs %}
+    <h2>People who liked what you liked also enjoyed...</h2>
+    <div class="shows-grid">
+        {% for show in collaborative_recs %}
+        <div class="show-card">
+            <h2>{{ show.title }}</h2>
+            <p class="theatre">{{ show.theatre }}</p>
+            <p>Liked by {{ show.similarity_score }} people with similar taste</p>
+        </div>
+        {% endfor %}
+    </div>
+{% endif %}
+{% endblock %}

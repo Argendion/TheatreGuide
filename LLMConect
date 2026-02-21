@@ -1,0 +1,36 @@
+import google.generativeai as genai
+import json
+
+# Configure the API key (don't hardcode it in real life! Use environment variables)
+genai.configure(api_key="YOUR_GEMINI_API_KEY")
+model = genai.GenerativeModel('gemini-pro')
+
+def analyze_show_with_llm(show_title, description, critic_reviews):
+    prompt = f"""
+    You are an expert theatre analyst. Analyze the following play and provide a JSON output with three keys: "genre", "mood", and "keywords".
+
+    Show Title: {show_title}
+    Description: {description}
+    Critic Reviews: {critic_reviews}
+
+    The "genre" should be one of: ["Comedy", "Drama", "Musical", "Tragedy", "Experimental", "Family", "Thriller"].
+    The "mood" should be one of: ["Lighthearted", "Serious", "Thought-provoking", "Dark", "Romantic", "Funny"].
+    The "keywords" should be a list of 3-5 key themes (e.g., ["love", "war", "identity", "loss", "friendship"]).
+
+    Return ONLY the valid JSON object.
+    """
+
+    response = model.generate_content(prompt)
+
+    # The response text will be a JSON string. Let's parse it.
+    try:
+        show_profile = json.loads(response.text)
+        return show_profile
+    except:
+        # Handle cases where the LLM doesn't return valid JSON
+        print("Error parsing LLM response")
+        return {"genre": "Unknown", "mood": "Unknown", "keywords": []}
+
+# How you'd use it:
+# profile = analyze_show_with_llm("Hamlet", "...", "...")
+# print(profile["genre"]) # Output: Drama
